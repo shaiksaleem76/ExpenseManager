@@ -3,10 +3,10 @@ package com.example.expensemanager.service;
 import com.example.expensemanager.Entity.Budget;
 import com.example.expensemanager.Entity.User;
 import com.example.expensemanager.Repository.BudgetRepository;
-import com.example.expensemanager.dto.DashboardResponse;
 import com.example.expensemanager.Repository.ExpenseRepository;
 import com.example.expensemanager.Repository.UserRepository;
 import com.example.expensemanager.Exception.UserNotFoundException;
+import com.example.expensemanager.dto.DashboardResponse;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,11 +23,12 @@ public class DashboardService {
 
     public DashboardService(
             ExpenseRepository expenseRepository,
-            UserRepository userRepository,BudgetRepository budgetRepository) {
+            UserRepository userRepository,
+            BudgetRepository budgetRepository) {
 
         this.expenseRepository = expenseRepository;
         this.userRepository = userRepository;
-        this.budgetRepository=budgetRepository;
+        this.budgetRepository = budgetRepository;
     }
 
     public DashboardResponse getDashboard(
@@ -35,12 +36,14 @@ public class DashboardService {
             int month,
             int year) {
 
+        // Find logged-in user
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UserNotFoundException(
                                 "User not found with email: " + email
                         ));
 
+        // Get total expenses for the selected month
         BigDecimal totalExpenses =
                 expenseRepository.getTotalExpensesByMonth(
                         user,
@@ -48,6 +51,7 @@ public class DashboardService {
                         year
                 );
 
+        // Get total number of transactions
         long totalTransactions =
                 expenseRepository.getTotalTransactionsByMonth(
                         user,
@@ -55,6 +59,7 @@ public class DashboardService {
                         year
                 );
 
+        // Get category-wise expenses
         List<Object[]> categoryData =
                 expenseRepository.getCategoryWiseExpenses(
                         user,
@@ -71,43 +76,63 @@ public class DashboardService {
 
             BigDecimal amount = (BigDecimal) row[1];
 
-            categoryWiseExpenses.put(categoryName, amount);
-        }
-        Budget budget = budgetRepository
-                .findByUser(user)
-                .stream()
-                .filter(b ->
-                        b.getMonth() == month &&
-                                b.getYear() == year
-                )
-                .findFirst()
-                .orElse(null);
-
-        BigDecimal budgetAmount = BigDecimal.ZERO;
-        BigDecimal remainingBudget = BigDecimal.ZERO;
-        String budgetStatus = "NO BUDGET";
-
-        if (budget != null) {
-
-            budgetAmount = budget.getAmount();
-
-            remainingBudget =
-                    budgetAmount.subtract(totalExpenses);
-
-            if (totalExpenses.compareTo(budgetAmount) > 0) {
-                budgetStatus = "OVER BUDGET";
-            } else {
-                budgetStatus = "WITHIN BUDGET";
-            }
+            categoryWiseExpenses.put(
+                    categoryName,
+                    amount
+            );
         }
 
-        DashboardResponse response = new DashboardResponse();
+        // Get all budgets for the selected month and year
+        List<Budget> budgets =
+                budgetRepository
+                        .findByUser(user)
+                        .stream()
+                        .filter(b ->
+                                b.getMonth() == month &&
+                                        b.getYear() == year
+                        )
+                        .toList();
+
+        // Add all category budgets together
+        BigDecimal budgetAmount =
+                budgets.stream()
+                        .map(Budget::getAmount)
+                        .reduce(
+                                BigDecimal.ZERO,
+                                BigDecimal::add
+                        );
+
+        // Calculate remaining total budget
+        BigDecimal remainingBudget =
+                budgetAmount.subtract(totalExpenses);
+
+        // Determine budget status
+        String budgetStatus;
+
+        if (budgets.isEmpty()) {
+
+            budgetStatus = "NO BUDGET";
+
+        } else if (totalExpenses.compareTo(budgetAmount) > 0) {
+
+            budgetStatus = "OVER BUDGET";
+
+        } else {
+
+            budgetStatus = "WITHIN BUDGET";
+        }
+
+        // Create dashboard response
+        DashboardResponse response =
+                new DashboardResponse();
 
         response.setMonth(month);
         response.setYear(year);
         response.setTotalExpenses(totalExpenses);
         response.setTotalTransactions(totalTransactions);
-        response.setCategoryWiseExpenses(categoryWiseExpenses);
+        response.setCategoryWiseExpenses(
+                categoryWiseExpenses
+        );
 
         response.setBudget(budgetAmount);
         response.setRemainingBudget(remainingBudget);
