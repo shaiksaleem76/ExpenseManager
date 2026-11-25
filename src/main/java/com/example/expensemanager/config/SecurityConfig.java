@@ -48,6 +48,8 @@ public class SecurityConfig {
                                 "/index.html",
                                 "/assets/**",
                                 "/favicon.ico",
+                                "/favicon.svg",
+                                 "/error",
 
                                 // =========================
                                 // Public APIs
