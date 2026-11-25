@@ -168,7 +168,7 @@ function Expenses() {
 
 
         const response = await fetch(
-          `http://localhost:8080/api/expenses?month=${month}&year=${year}&page=${page}&size=10&sortBy=${sortBy}&direction=${direction}&search=${encodeURIComponent(search)}`,
+          `/api/expenses?month=${month}&year=${year}&page=${page}&size=10&sortBy=${sortBy}&direction=${direction}&search=${encodeURIComponent(search)}`,
           {
             method: 'GET',
 
@@ -426,8 +426,8 @@ function Expenses() {
 
 
       const url = isEditing
-        ? `http://localhost:8080/api/expenses/${editingExpenseId}`
-        : 'http://localhost:8080/api/expenses'
+        ? `/api/expenses/${editingExpenseId}`
+        : '/api/expenses'
 
 
       const method = isEditing
@@ -684,7 +684,7 @@ function Expenses() {
       // ========================================
 
       const response = await fetch(
-        `http://localhost:8080/api/expenses/${expenseToDelete.id}`,
+        `/api/expenses/${expenseToDelete.id}`,
         {
           method: 'DELETE',
 

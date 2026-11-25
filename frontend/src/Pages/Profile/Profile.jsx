@@ -17,7 +17,7 @@ function Profile({ onLogout }) {
         const token = localStorage.getItem('token')
 
         const response = await fetch(
-          'http://localhost:8080/api/users/me',
+          '/api/users/me',
           {
             method: 'GET',
             headers: {

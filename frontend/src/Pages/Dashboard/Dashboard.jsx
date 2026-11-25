@@ -37,7 +37,7 @@ function Dashboard() {
         const token = localStorage.getItem('token')
 
         const response = await fetch(
-          `http://localhost:8080/api/dashboard?month=${month}&year=${year}`,
+          `/api/dashboard?month=${month}&year=${year}`,
           {
             method: 'GET',
             headers: {

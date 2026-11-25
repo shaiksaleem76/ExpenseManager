@@ -15,7 +15,7 @@ import {
 
 import './Analytics.css'
 
-const API_BASE_URL = 'http://localhost:8080/api/analytics'
+const API_BASE_URL = '/api/analytics'
 
 function Analytics() {
 

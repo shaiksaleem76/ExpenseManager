@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import './RecurringBills.css'
 
 const API_URL =
-  'http://localhost:8080/api/recurring-bills'
+  '/api/recurring-bills'
 
 function RecurringBills() {
 

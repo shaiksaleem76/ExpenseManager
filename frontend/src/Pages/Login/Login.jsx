@@ -22,7 +22,7 @@ function Login({ setIsLoggedIn, onRegister }) {
     try {
 
       const response = await fetch(
-        'http://localhost:8080/api/users/login',
+        'api/users/login',
         {
           method: 'POST',
 

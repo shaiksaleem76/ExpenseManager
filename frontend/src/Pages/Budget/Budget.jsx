@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './Budget.css'
 
-const API_URL = 'http://localhost:8080/api/budgets'
+const API_URL = '/api/budgets'
 
 const categories = [
   { name: 'Food', icon: '🍔' },
