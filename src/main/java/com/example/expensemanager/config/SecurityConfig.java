@@ -96,7 +96,7 @@ public class SecurityConfig {
                 new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                List.of("http://localhost:5173")
+                List.of("http://localhost:5173","https://expensemanager-production-1e82e293.up.railway.app")
         );
 
         configuration.setAllowedMethods(
